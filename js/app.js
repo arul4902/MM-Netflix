@@ -1635,27 +1635,90 @@ class LoveStoryApp {
 
   setupTimelineObserver() {
     const steps = document.querySelectorAll('.timeline-step');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const mobilePills = document.querySelectorAll('.mobile-nav-pill');
     const sections = document.querySelectorAll('section[id]');
+    const mobileNavStrip = document.getElementById('mobileNavStrip');
 
+    let scrollTimeout;
     window.addEventListener('scroll', () => {
-      let currentId = '';
+      let currentId = 'hero';
+      const offsetThreshold = window.innerWidth <= 1080 ? 150 : 130;
+
       sections.forEach(sec => {
-        const top = sec.offsetTop - 180;
+        const top = sec.offsetTop - offsetThreshold;
         if (window.scrollY >= top) {
           currentId = sec.getAttribute('id');
         }
       });
 
+      // Update timeline tracker
       steps.forEach(step => {
         step.classList.toggle('active', step.dataset.target === currentId);
       });
-    });
 
+      // Update desktop navigation links
+      navLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        link.classList.toggle('active', href === `#${currentId}`);
+      });
+
+      // Update mobile navigation pills
+      let activePill = null;
+      mobilePills.forEach(pill => {
+        const href = pill.getAttribute('href');
+        const isActive = href === `#${currentId}`;
+        pill.classList.toggle('active', isActive);
+        if (isActive) activePill = pill;
+      });
+
+      // Auto-scroll active pill into view in the mobile nav strip
+      if (activePill && mobileNavStrip) {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          const pillLeft = activePill.offsetLeft;
+          const pillWidth = activePill.offsetWidth;
+          const stripWidth = mobileNavStrip.offsetWidth;
+          mobileNavStrip.scrollTo({
+            left: pillLeft - (stripWidth / 2) + (pillWidth / 2),
+            behavior: 'smooth'
+          });
+        }, 100);
+      }
+    }, { passive: true });
+
+    // Timeline step click
     steps.forEach(step => {
-      step.addEventListener('click', () => {
+      step.addEventListener('click', (e) => {
+        e.preventDefault();
         const target = document.getElementById(step.dataset.target);
         if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
+          const headerOffset = window.innerWidth <= 1080 ? 115 : 85;
+          const targetPos = target.getBoundingClientRect().top + window.pageYOffset;
+          window.scrollTo({
+            top: Math.max(0, targetPos - headerOffset),
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Desktop nav links and Mobile category pills click with smooth header-offset scroll
+    document.querySelectorAll('.nav-link, .mobile-nav-pill').forEach(item => {
+      item.addEventListener('click', (e) => {
+        const href = item.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          e.preventDefault();
+          const targetEl = document.querySelector(href);
+          if (targetEl) {
+            const headerOffset = window.innerWidth <= 1080 ? 115 : 85;
+            const targetPos = targetEl.getBoundingClientRect().top + window.pageYOffset;
+            window.scrollTo({
+              top: Math.max(0, targetPos - headerOffset),
+              behavior: 'smooth'
+            });
+            history.replaceState(null, '', href);
+          }
         }
       });
     });

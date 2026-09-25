@@ -85,31 +85,47 @@
        SITE HEADER & NAVIGATION
        ========================================================================== -->
   <header class="site-header" id="siteHeader">
-    <div class="header-left">
-      <a href="#hero" class="header-brand">
-        <span class="brand-monogram">M&amp;M</span>
-        <span class="brand-text">OUR STORY</span>
-      </a>
-      <nav class="header-nav">
+    <div class="header-main-bar">
+      <div class="header-left">
+        <a href="#hero" class="header-brand">
+          <span class="brand-monogram">M&amp;M</span>
+          <span class="brand-text">OUR STORY</span>
+        </a>
+      </div>
+
+      <nav class="header-nav desktop-nav" id="headerNav" aria-label="Main Navigation">
         <a href="#hero" class="nav-link active">Home</a>
         <a href="#episodesShelf" class="nav-link">Episodes</a>
         <a href="#chapter-terrace" class="nav-link">Terrace Premiere</a>
         <a href="#chapter-friends" class="nav-link">Best Friends</a>
-        <a href="#chapter-raw-chat" class="nav-link" style="color:var(--accent-champagne);">💬 Midnight Archive</a>
+        <a href="#chapter-raw-chat" class="nav-link highlight-archive">💬 Midnight Archive</a>
         <a href="#chapter-wedding" class="nav-link">Wedding (May 10)</a>
         <a href="#chapter-movienight" class="nav-link">Movie Nights</a>
         <a href="#chapter-gallery" class="nav-link">Scenes</a>
       </nav>
-    </div>
-    <div class="header-right">
-      <div class="profile-current-pill" id="currentProfilePill" style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); padding:4px 12px; border-radius:9999px; border:1px solid var(--border-subtle);">
-        <img id="headerProfileAvatar" src="./assets/media/hero_playful_pout.png" alt="Profile avatar" style="width:24px; height:24px; border-radius:9999px; object-fit:cover;">
-        <span id="headerProfileName" style="font-size:0.8rem; font-weight:600; color:var(--accent-champagne);">Together (Us)</span>
-        <button id="switchProfileBtn" class="wa-action-btn" title="Switch Profile / Sign Out" aria-label="Switch Profile">🔄 Switch Profile</button>
+
+      <div class="header-right">
+        <div class="profile-current-pill" id="currentProfilePill">
+          <img id="headerProfileAvatar" src="./assets/media/hero_playful_pout.png" alt="Profile avatar">
+          <span id="headerProfileName">Together (Us)</span>
+          <button id="switchProfileBtn" class="wa-action-btn" title="Switch Profile / Sign Out" aria-label="Switch Profile">🔄 Switch Profile</button>
+        </div>
+        <button class="action-icon-btn" id="surpriseMeBtn" title="Surprise Me ✨" aria-label="Surprise Memory">✨</button>
+        <button class="action-icon-btn" id="headerAudioToggle" title="Audio Player" aria-label="Toggle Audio">🎵</button>
       </div>
-      <button class="action-icon-btn" id="surpriseMeBtn" title="Surprise Me ✨" aria-label="Surprise Memory">✨</button>
-      <button class="action-icon-btn" id="headerAudioToggle" title="Audio Player" aria-label="Toggle Audio">🎵</button>
     </div>
+
+    <!-- Mobile Navigation Bar (Always visible on mobile & tablet, NOTHING IS HIDDEN) -->
+    <nav class="mobile-nav-strip" id="mobileNavStrip" aria-label="Mobile Navigation">
+      <a href="#hero" class="mobile-nav-pill active">Home</a>
+      <a href="#episodesShelf" class="mobile-nav-pill">Episodes</a>
+      <a href="#chapter-terrace" class="mobile-nav-pill">Terrace</a>
+      <a href="#chapter-friends" class="mobile-nav-pill">Best Friends</a>
+      <a href="#chapter-raw-chat" class="mobile-nav-pill highlight-pill">💬 Midnight Archive</a>
+      <a href="#chapter-wedding" class="mobile-nav-pill">Wedding (May 10)</a>
+      <a href="#chapter-movienight" class="mobile-nav-pill">Movie Nights</a>
+      <a href="#chapter-gallery" class="mobile-nav-pill">Scenes</a>
+    </nav>
 
     <!-- Header Audio Drawer Popover -->
     <div class="header-audio-drawer" id="headerAudioDrawer" role="region" aria-label="Audio Controls">
