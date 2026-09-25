@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OUR STORY — NOW STREAMING | Meghana & Manideep</title>
+  <meta name="description" content="An exclusive cinematic streaming love story. From school crush to marriage and the sweetest new chapter. Based on the true love story of Meghana & Bunnyy.">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>">
+</head>
+<body>
+  <!-- Global Overlays -->
+  <div class="film-grain" aria-hidden="true"></div>
+  <div class="cinematic-vignette" aria-hidden="true"></div>
+  <canvas id="ambientCanvas" aria-hidden="true"></canvas>
+  <canvas id="petalsCanvas" aria-hidden="true"></canvas>
+
+  <!-- ==========================================================================
+       03 — CINEMATIC INTRO SCREEN (Black screen sequence)
+       ========================================================================== -->
+  <div id="cinematicIntro" role="dialog" aria-modal="true" aria-label="Cinematic Intro">
+    <div class="intro-light-sweep" id="introLightSweep"></div>
+    <div class="intro-content">
+      <h2 id="introPhrase" class="intro-phrase"></h2>
+      <div id="introBranding" class="intro-branding">
+        <div class="intro-monogram">M &amp; M</div>
+        <h1 class="intro-title">OUR STORY</h1>
+        <div class="intro-tagline">NOW STREAMING</div>
+        <p class="intro-subtitle">Based on a true love story</p>
+      </div>
+    </div>
+    <button id="skipIntroBtn" class="btn-skip-intro" aria-label="Skip Intro">Skip Intro ⏭</button>
+  </div>
+
+  <!-- ==========================================================================
+       04 — WHO'S WATCHING? (Streaming Profile Selector)
+       ========================================================================== -->
+  <div id="profileScreen" role="dialog" aria-modal="true" aria-label="Profile Selection">
+    <div class="profile-header">
+      <h1>Who’s watching our story?</h1>
+      <p>Select your profile to begin the cinematic journey</p>
+    </div>
+    <div class="profiles-grid">
+      <!-- Profile HER -->
+      <button class="profile-card" data-profile="her" aria-label="Watch as Meghana">
+        <div class="profile-avatar">
+          <img src="./assets/media/cheek_kiss_selfie.png" alt="Her Avatar">
+          <span class="avatar-badge">HER ❤️</span>
+        </div>
+        <span class="profile-name">Meghana 👑</span>
+      </button>
+
+      <!-- Profile HIM -->
+      <button class="profile-card" data-profile="him" aria-label="Watch as Bunnyy">
+        <div class="profile-avatar">
+          <img src="./assets/media/sunny_gaze_close.png" alt="Him Avatar">
+          <span class="avatar-badge">HIM ❤️</span>
+        </div>
+        <span class="profile-name">Bunnyy 🎩</span>
+      </button>
+
+      <!-- Profile US (Default) -->
+      <button class="profile-card" data-profile="us" aria-label="Watch together as Us">
+        <div class="profile-avatar" style="border-color: var(--accent-champagne);">
+          <img src="./assets/media/hero_playful_pout.png" alt="Us Avatar">
+          <span class="avatar-badge">US ♡</span>
+        </div>
+        <span class="profile-name" style="color:var(--accent-champagne);">Together (Us) ✨</span>
+      </button>
+
+      <!-- Locked Baby Profile -->
+      <button class="profile-card locked" id="babyProfileCard" data-profile="baby" aria-label="Baby Profile Coming Soon">
+        <div class="profile-avatar">
+          <span class="baby-icon-glow">👶</span>
+          <span class="lock-pill">LOCKED</span>
+        </div>
+        <span class="profile-name">Coming Soon 🍼</span>
+        <span class="locked-tooltip">New profile arriving soon…</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       SITE HEADER & NAVIGATION
+       ========================================================================== -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-left">
+      <a href="#hero" class="header-brand">
+        <span class="brand-monogram">M&amp;M</span>
+        <span class="brand-text">OUR STORY</span>
+      </a>
+      <nav class="header-nav">
+        <a href="#hero" class="nav-link active">Home</a>
+        <a href="#episodesShelf" class="nav-link">Episodes</a>
+        <a href="#chapter-terrace" class="nav-link">Terrace Premiere</a>
+        <a href="#chapter-friends" class="nav-link">Best Friends</a>
+        <a href="#chapter-raw-chat" class="nav-link" style="color:var(--accent-champagne);">💬 Midnight Archive</a>
+        <a href="#chapter-wedding" class="nav-link">Wedding (May 10)</a>
+        <a href="#chapter-movienight" class="nav-link">Movie Nights</a>
+        <a href="#chapter-gallery" class="nav-link">Scenes</a>
+      </nav>
+    </div>
+    <div class="header-right">
+      <div class="profile-current-pill" id="currentProfilePill" style="display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.06); padding:4px 12px; border-radius:9999px; border:1px solid var(--border-subtle);">
+        <img id="headerProfileAvatar" src="./assets/media/hero_playful_pout.png" alt="Profile avatar" style="width:24px; height:24px; border-radius:9999px; object-fit:cover;">
+        <span id="headerProfileName" style="font-size:0.8rem; font-weight:600; color:var(--accent-champagne);">Together (Us)</span>
+        <button id="switchProfileBtn" class="wa-action-btn" title="Switch Profile / Sign Out" aria-label="Switch Profile">🔄 Switch Profile</button>
+      </div>
+      <button class="action-icon-btn" id="surpriseMeBtn" title="Surprise Me ✨" aria-label="Surprise Memory">✨</button>
+      <button class="action-icon-btn" id="headerAudioToggle" title="Audio Player" aria-label="Toggle Audio">🎵</button>
+    </div>
+
+    <!-- Header Audio Drawer Popover -->
+    <div class="header-audio-drawer" id="headerAudioDrawer" role="region" aria-label="Audio Controls">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="streaming-badge" style="font-size:0.7rem; padding:2px 8px;">ORIGINAL SOUNDTRACK</span>
+        <button id="closeHeaderAudioBtn" class="action-icon-btn" style="width:26px; height:26px; font-size:0.75rem;" aria-label="Close Audio Drawer">✕</button>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="drawer-track-info" style="flex:1;">
+          <h4 id="drawerTrackTitle">Rendu Kallu Chalavamma</h4>
+          <p id="drawerTrackArtist">Official Love Soundtrack (Mahanati)</p>
+        </div>
+        <div class="drawer-equalizer-bars" id="drawerEqualizer">
+          <span class="eq-bar active"></span>
+          <span class="eq-bar active"></span>
+          <span class="eq-bar active"></span>
+          <span class="eq-bar active"></span>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:center; gap:12px;">
+        <button id="drawerPrevBtn" class="action-icon-btn" style="width:34px; height:34px;" title="Previous Track">⏮</button>
+        <button id="drawerPlayBtn" class="btn btn-wine" style="padding:6px 18px; font-size:0.85rem;" title="Play / Pause">▶ Play</button>
+        <button id="drawerNextBtn" class="action-icon-btn" style="width:34px; height:34px;" title="Next Track">⏭</button>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:0.75rem; color:var(--text-muted);">Vol</span>
+        <input type="range" id="drawerVolumeSlider" min="0" max="1" step="0.05" value="0.7" style="flex:1; accent-color:var(--accent-rose); height:4px;">
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       STORY TIMELINE TRACKER (Fixed Progress Bar)
+       ========================================================================== -->
+  <nav class="timeline-tracker" id="timelineTracker" aria-label="Relationship Timeline">
+    <div class="timeline-step active" data-target="hero">🎒 10th Class Crush</div>
+    <span class="timeline-separator">→</span>
+    <div class="timeline-step" data-target="chapter-ep-1">💍 The Proposal</div>
+    <span class="timeline-separator">→</span>
+    <div class="timeline-step" data-target="chapter-terrace">🎂 Secret Birthday</div>
+    <span class="timeline-separator">→</span>
+    <div class="timeline-step" data-target="chapter-friends">❤️ Best Friends</div>
+    <span class="timeline-separator">→</span>
+    <div class="timeline-step" data-target="chapter-family">✨ Pelli Choopulu</div>
+    <span class="timeline-separator">→</span>
+    <div class="timeline-step" data-target="chapter-raw-chat">💬 Midnight Texts</div>
+    <span class="timeline-separator">→</span>
+    <div class="timeline-step" data-target="chapter-wedding">👰 May 10, 2026</div>
+    <span class="timeline-separator">→</span>
+    <div class="timeline-step" data-target="chapter-movienight">🍿 Married Life</div>
+    <span class="timeline-separator">→</span>
+    <div class="timeline-step" data-target="chapter-baby">👶 Coming Soon</div>
+  </nav>
+
+  <!-- ==========================================================================
+       05 — MAIN HERO (STREAMING FEATURED TITLE)
+       ========================================================================== -->
+  <section class="hero-streaming" id="hero">
+    <div class="hero-background">
+      <img src="./assets/media/sunset_embrace_gold.png" alt="Meghana and Manideep Golden Hour Embrace" class="hero-bg-image">
+      <div class="hero-gradient-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-tag-row">
+        <span class="streaming-badge">★ A LOVE ORIGINAL</span>
+        <span class="streaming-badge" style="background: rgba(230,199,156,0.15); border-color: rgba(230,199,156,0.4); color: var(--accent-champagne);">BASED ON A TRUE STORY</span>
+      </div>
+      <h1 class="hero-title">OUR STORY</h1>
+      <p class="hero-tagline">“From school-time love to forever.”</p>
+      <div class="hero-metadata">
+        <span class="meta-match">100% Soulmate Match</span>
+        <span>8+ Years</span>
+        <span class="meta-badge">4K HDR</span>
+        <span class="meta-badge">5.1 SOUND</span>
+        <span>Romance • Best Friends • Marriage • Forever</span>
+      </div>
+      <div class="hero-actions">
+        <a href="#episodesShelf" class="btn btn-primary" id="watchStoryBtn">▶ Watch Our Story</a>
+        <a href="#chapter-gallery" class="btn btn-secondary">♡ Our Moments</a>
+        <button class="btn btn-wine" id="startMovieNightHeroBtn">🍿 Movie Night Mode</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       06 — CONTINUE WATCHING (HORIZONTAL EPISODE SHELF)
+       ========================================================================== -->
+  <section class="section-shelf" id="episodesShelf">
+    <div class="shelf-container">
+      <div class="shelf-header">
+        <div class="shelf-title-group">
+          <h2>Continue Watching Our Story</h2>
+          <p>Chronological episodes of their real journey</p>
+        </div>
+        <div class="shelf-arrows">
+          <button class="shelf-arrow-btn" id="shelfPrevBtn" aria-label="Previous Episodes">‹</button>
+          <button class="shelf-arrow-btn" id="shelfNextBtn" aria-label="Next Episodes">›</button>
+        </div>
+      </div>
+      <div class="episodes-carousel" id="episodesShelfContainer">
+        <!-- Rendered dynamically by app.js -->
+      </div>
+    </div>
+
+    <!-- INNOVATIVE FEATURE: DAY-TO-DUSK ATMOSPHERE SLIDER -->
+    <div style="max-width: var(--container-max); margin: 60px auto 0; padding: 0 40px; text-align: center;">
+      <span class="streaming-badge">INTERACTIVE CINEMATIC LENS</span>
+      <h3 style="font-family: var(--font-serif); font-size: clamp(1.4rem, 2.5vw, 2rem); margin-top: 8px;">
+        From Golden Peak To Ocean Dusk
+      </h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px;">
+        Drag the slider horizontally to transition from their mountain golden hour to the twilight ocean silhouette.
+      </p>
+
+      <div class="atmosphere-compare-container" id="atmosphereSlider">
+        <div class="compare-image-layer">
+          <img src="./assets/media/beach_sunset_silhouette.png" alt="Twilight Beach Sunset Silhouette">
+        </div>
+        <div class="compare-image-layer top-layer" id="compareTopLayer">
+          <img src="./assets/media/sunset_embrace_gold.png" alt="Golden Mountain Peak Embrace">
+        </div>
+        <div class="compare-slider-handle" id="compareHandle">↔</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       07 — EPISODE 01: BEFORE SHE KNEW (SCHOOL DAYS)
+       ========================================================================== */
+  -->
+  <section class="chapter-section" id="chapter-ep-1">
+    <div class="chapter-badge-wrap">
+      <span class="streaming-badge">EPISODE 01 • THE ORIGINS</span>
+    </div>
+    <h2 class="chapter-heading">Before She Knew</h2>
+    <p class="chapter-lead">“He loved her before their story had even begun.”</p>
+    
+    <div class="timeline-stepper">
+      <div class="stepper-node completed">
+        <h3>10th Class 🎒</h3>
+        <p>A quiet school corridor, shy glances, and a heart that was already completely stolen. He loved her long before she ever discovered his feelings.</p>
+      </div>
+      <div class="stepper-node completed">
+        <h3>Intermediate 🎓</h3>
+        <p>Years passed, feelings deepened into certainty. He knew he couldn't keep this pure emotion inside any longer.</p>
+      </div>
+      <div class="stepper-node completed">
+        <h3>The Proposal 💍</h3>
+        <p>With nervous hands and raw honesty, he confessed his love during Intermediate.</p>
+      </div>
+      <div class="stepper-node completed">
+        <h3>She Said Yes ❤️</h3>
+        <p>Her smile lit up his universe. The two paths became one shared destiny.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       08 — SECRET TERRACE PREMIERE (12:00 AM)
+       ========================================================================== -->
+  <section class="chapter-section" id="chapter-terrace">
+    <div class="secret-terrace-wrapper">
+      <div class="starry-sky"></div>
+      <span class="streaming-badge" style="position:relative; z-index:2;">EPISODE 03 • SECRET PREMIERE</span>
+      <div class="terrace-clock">12:00 AM</div>
+      <h2 class="chapter-heading" style="color: #fff; margin-bottom: 12px;">THE SECRET BIRTHDAY</h2>
+      <p class="chapter-lead" style="margin: 0 auto 30px; text-align: center;">
+        “Everyone thought it was just another night. He had other plans.<br>
+        He secretly climbed onto her terrace at midnight, without anyone knowing, just to make her birthday unforgettable.”
+      </p>
+
+      <div class="terrace-interactive-items">
+        <button class="terrace-item-btn" data-item="cake" aria-label="Secret Cake Memory">
+          <span class="terrace-item-icon">🎂</span>
+          <span class="terrace-item-name">Midnight Cake</span>
+          <span class="terrace-item-tag">Tap to reveal memory</span>
+        </button>
+
+        <button class="terrace-item-btn" data-item="teddy" aria-label="Teddy Bear Memory">
+          <span class="terrace-item-icon">🧸</span>
+          <span class="terrace-item-name">The Teddy Bear</span>
+          <span class="terrace-item-tag">Tap to reveal memory</span>
+        </button>
+
+        <button class="terrace-item-btn" data-item="bouquet" aria-label="Bouquet Memory">
+          <span class="terrace-item-icon">💐</span>
+          <span class="terrace-item-name">Flower Bouquet</span>
+          <span class="terrace-item-tag">Tap to reveal memory</span>
+        </button>
+      </div>
+
+      <div class="terrace-memory-card" id="terraceMemoryCard">
+        <h3 id="terraceMemoryTitle" style="color:var(--accent-champagne); margin-bottom:8px; font-family:var(--font-serif);"></h3>
+        <p id="terraceMemoryDesc" style="color:var(--text-muted); line-height:1.6;"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       09 — BEST FRIENDS IN LOVE & HILARIOUS MAHARANI ROLES
+       ========================================================================== -->
+  <section class="chapter-section" id="chapter-friends">
+    <div class="chapter-badge-wrap">
+      <span class="streaming-badge">EPISODE 04 • BEST FRIENDS</span>
+    </div>
+    <h2 class="chapter-heading">Somewhere Along The Way, Love Became Friendship Too</h2>
+    <p class="chapter-lead">“They laughed together, behaved like best friends, fought like little kids, and loved each other effortlessly.”</p>
+
+    <!-- Playful mood ticker -->
+    <div class="mood-ticker">
+      <span class="ticker-pill">LOVERS ❤️</span>
+      <span class="ticker-pill highlight">BEST FRIENDS 🤝</span>
+      <span class="ticker-pill">FIGHT LIKE KIDS 😂</span>
+      <span class="ticker-pill highlight">MAKE UP AGAIN ❤️</span>
+      <span class="ticker-pill">REPEAT ↻</span>
+    </div>
+
+    <!-- Video Showcase & Interactive Maharani Roles -->
+    <div class="best-friends-grid">
+      <div class="funny-video-card">
+        <video id="maharaniVideo" loop playsinline controls poster="./assets/media/mirror_festive_saree.png">
+          <source src="./assets/media/video_maharani_roles.mp4" type="video/mp4">
+        </video>
+        <div style="padding: 16px; background: #0c0b10; border-top: 1px solid var(--border-subtle);">
+          <span class="streaming-badge">SPECIAL FEATURE</span>
+          <h4 style="font-family:var(--font-serif); font-size:1.15rem; margin-top:6px;">How My Maharani Sees Me 👸</h4>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;">Doctor, Rapido Captain, Photographer, Zomato Guy, Sheikh, Lawyer, Google!</p>
+        </div>
+      </div>
+
+      <div class="maharani-roles-panel">
+        <h3 style="font-family:var(--font-serif); font-size:1.3rem; margin-bottom:12px; color:var(--accent-champagne);">Click to Jump Roles:</h3>
+        
+        <button class="role-pill-btn active" data-role="0">
+          <span class="role-icon">🩺</span>
+          <div class="role-content">
+            <h4>When she is sick 🤒</h4>
+            <p>Her personal 24/7 caring Doctor</p>
+          </div>
+        </button>
+
+        <button class="role-pill-btn" data-role="1">
+          <span class="role-icon">🛵</span>
+          <div class="role-content">
+            <h4>When she wants to go out 😄</h4>
+            <p>Her dedicated Rapido Captain ready to ride</p>
+          </div>
+        </button>
+
+        <button class="role-pill-btn" data-role="2">
+          <span class="role-icon">📸</span>
+          <div class="role-content">
+            <h4>When she needs photos 📸</h4>
+            <p>National Geographic level photographer</p>
+          </div>
+        </button>
+
+        <button class="role-pill-btn" data-role="3">
+          <span class="role-icon">🍕</span>
+          <div class="role-content">
+            <h4>When she is hungry 🍕</h4>
+            <p>Express Zomato delivery boy straight to her room</p>
+          </div>
+        </button>
+
+        <button class="role-pill-btn" data-role="4">
+          <span class="role-icon">💵</span>
+          <div class="role-content">
+            <h4>When she wants money 💵</h4>
+            <p>Dubai Sheikh mode: whatever my Maharani desires!</p>
+          </div>
+        </button>
+
+        <button class="role-pill-btn" data-role="5">
+          <span class="role-icon">⚖️</span>
+          <div class="role-content">
+            <h4>When she wants to win an argument ⚖️</h4>
+            <p>Supreme Court lawyer: she is always 100% right!</p>
+          </div>
+        </button>
+
+        <button class="role-pill-btn" data-role="6">
+          <span class="role-icon">🔍</span>
+          <div class="role-content">
+            <h4>When she finds something 🔍</h4>
+            <p>Personal Google finding lost things in seconds</p>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- INNOVATIVE FEATURE: BEARD PINCH COUNTER & ARCADE FIGHT -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 50px; align-items: center;">
+      <!-- Interactive Beard Pinch -->
+      <div class="beard-pinch-interactive-card">
+        <span class="streaming-badge" style="margin-bottom: 12px;">INTERACTIVE GAME</span>
+        <h3 style="font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 8px;">Pinch Bunnyy’s Beard 😂</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Click or tap to assert Maharani dominance!</p>
+        
+        <div class="beard-pinch-img-wrap" id="beardPinchWrap">
+          <img src="./assets/media/candid_beard_pinch.png" alt="Playfully pinching chin and beard">
+        </div>
+        
+        <div class="pinch-counter-badge">
+          <span>🤏 Pinches Delivered:</span>
+          <span id="pinchCounterNumber" style="color: var(--accent-rose);">1,429</span>
+        </div>
+        <div>
+          <button class="btn btn-wine" id="pinchBeardBtn">🤏 Pinch His Beard!</button>
+        </div>
+        <p style="font-size: 0.78rem; color: var(--accent-champagne); margin-top: 10px; font-style: italic;">
+          “Bunnyy's infinite patience: 100% Guaranteed ❤️”
+        </p>
+      </div>
+
+      <!-- Arcade Date Video -->
+      <div style="border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-subtle); background: #000; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+        <video controls loop playsinline poster="./assets/media/hero_playful_pout.png" style="width: 100%; height: 380px; object-fit: cover; display: block;">
+          <source src="./assets/media/video_arcade_fun.mp4" type="video/mp4">
+        </video>
+        <div style="padding: 16px; background: #0c0b10;">
+          <span class="streaming-badge">ARCADE DATE</span>
+          <h4 style="font-family: var(--font-serif); font-size: 1.15rem; margin-top: 6px;">Fighting Like Kids At Basketball</h4>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Competing, cheering, teasing, and having the time of their lives.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       10 — MICHAEL KORS SURPRISE GIFT BOX
+       ========================================================================== -->
+  <section class="chapter-section" id="chapter-gift">
+    <div class="gift-surprise-container">
+      <div id="sparklesOverlay"></div>
+      <span class="streaming-badge">EPISODE 05 • THE SURPRISE</span>
+      <h2 class="chapter-heading" style="margin-top:14px;">“You Asked For It...”</h2>
+      <p class="chapter-lead" style="margin: 0 auto 30px;">
+        One day she jokingly asked for something...
+      </p>
+
+      <div class="gift-box-stage">
+        <div class="interactive-box" id="interactiveGiftBox" title="Tap to open gift">
+          <div class="box-lid">🎁</div>
+        </div>
+        <button class="btn btn-wine" id="unboxGiftBtn">WHAT DID SHE ASK FOR? 👀</button>
+
+        <div class="unboxed-content" id="unboxedContent">
+          <h3 style="font-family:var(--font-serif); font-size:2rem; color:var(--accent-champagne); margin-top:20px;">“A Michael Kors bag.”</h3>
+          <p style="font-family:var(--font-editorial); font-size:1.4rem; font-style:italic; color:var(--text-muted); margin: 8px 0 16px;">
+            She was joking. He wasn't.
+          </p>
+          <img src="./assets/media/candid_mk_handbag.png" alt="Meghana with her Michael Kors surprise bag" class="revealed-bag-photo">
+          <p style="font-family:var(--font-editorial); font-size:1.25rem; font-style:italic; color:var(--accent-champagne); max-width:600px; margin: 16px auto 0; line-height:1.6;">
+            “It wasn't about the bag.<br>It was about him remembering the smallest thing she said.”
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       11 — THE ROSE TRAIL
+       ========================================================================== -->
+  <section class="chapter-section rose-trail-section" id="chapter-roses">
+    <div class="trail-vertical-line" aria-hidden="true"></div>
+    <div style="text-align:center; max-width:800px; margin: 0 auto 60px;">
+      <span class="streaming-badge">EPISODE 06 • LOVE LANGUAGE</span>
+      <h2 class="chapter-heading" style="margin-top:14px;">The Rose Trail</h2>
+      <p class="chapter-lead">“He never needed a reason to bring her flowers.”</p>
+    </div>
+
+    <div class="rose-stops-grid">
+      <div class="rose-stop">
+        <div class="rose-stop-img">
+          <img src="./assets/media/forest_red_gown.png" alt="Walking in the forest red gown" loading="lazy">
+        </div>
+        <div class="rose-stop-text">
+          <h3>Ordinary Days Made Extraordinary</h3>
+          <p>He didn't save his romantic gestures for anniversaries or Valentine's Day. If it was Tuesday, he brought roses. If she had a long day, he brought surprises.</p>
+        </div>
+      </div>
+
+      <div class="rose-stop">
+        <div class="rose-stop-img">
+          <img src="./assets/media/forest_bridge_pink.png" alt="Bridge walk in traditional wear" loading="lazy">
+        </div>
+        <div class="rose-stop-text">
+          <h3>Every Occasion Created</h3>
+          <p>Walking hand in hand through every season of life. With each passing milestone, his thoughtful devotion only grew deeper.</p>
+        </div>
+      </div>
+
+      <div class="rose-stop">
+        <div class="rose-stop-img">
+          <img src="./assets/media/white_attire_dream.png" alt="White attire sunny embrace" loading="lazy">
+        </div>
+        <div class="rose-stop-text">
+          <h3>A Promise in Every Bloom</h3>
+          <p>“Some people wait for occasions.<br><strong style="color:var(--accent-champagne);">He created them. 🌹</strong>”</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       12 — HIS LOVE LANGUAGE: CARE & PROTECTION
+       ========================================================================== -->
+  <section class="chapter-section" id="chapter-care">
+    <div class="love-language-block">
+      <span class="streaming-badge">EPISODE 07 • HEART &amp; SOUL</span>
+      <h2 class="chapter-heading" style="margin-top:14px;">His Kind of Love</h2>
+      <p class="chapter-lead">“His love was never just words.”</p>
+
+      <div class="words-manifesto">
+        <div class="manifesto-word">CARE.</div>
+        <div class="manifesto-word">PROTECTION.</div>
+        <div class="manifesto-word">PRESENCE.</div>
+      </div>
+
+      <p style="font-family:var(--font-editorial); font-size:clamp(1.2rem, 2.2vw, 1.7rem); font-style:italic; line-height:1.7; color:var(--text-primary); margin-bottom:30px;">
+        “She describes his care as being like a mother's care.<br>
+        During times when she wasn't feeling well, he would stay awake at night and take care of her.<br>
+        He stood beside her during her most difficult times.”
+      </p>
+
+      <!-- INNOVATIVE FEATURE: WIPE THE RAIN GLASS & CHEEK KISS STAMPER -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px; margin-top: 40px; align-items: start;">
+        <!-- Wipe the Rain Glass -->
+        <div style="background: rgba(18, 17, 24, 0.8); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 24px; text-align: center;">
+          <span class="streaming-badge" style="margin-bottom: 8px;">INTERACTIVE CANVAS</span>
+          <h4 style="font-family: var(--font-serif); font-size: 1.15rem; margin-bottom: 6px;">Wipe The Misty Glass 🌧️</h4>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px;">Swipe or drag your finger/mouse across the glass to reveal them holding hands!</p>
+          
+          <div class="wipe-glass-wrapper" id="wipeGlassWrapper">
+            <img src="./assets/media/waterfall_glass_art.png" alt="Behind waterfall glass holding hands" class="wipe-underlying-image">
+            <canvas id="wipeGlassCanvas" class="wipe-canvas-overlay"></canvas>
+            <div class="wipe-glass-hint" id="wipeGlassHint">👆 Swipe across to clear mist</div>
+          </div>
+          <div style="margin-top: 12px;">
+            <button class="btn btn-secondary" id="resetMistBtn" style="font-size: 0.8rem; padding: 8px 16px;">💧 Re-Mist Glass</button>
+          </div>
+        </div>
+
+        <!-- Cheek Kiss Stamper & Overhead Embrace -->
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+          <div class="kiss-stamper-card" id="kissStamperCard" style="background: rgba(18, 17, 24, 0.8); padding: 20px; text-align: center;">
+            <span class="streaming-badge" style="margin-bottom: 8px;">SWEET MOMENT</span>
+            <h4 style="font-family: var(--font-serif); font-size: 1.15rem; margin-bottom: 6px;">Send A Cheek Kiss 💋</h4>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">Tap anywhere on the photo to stamp kisses!</p>
+            <div style="position: relative; border-radius: 12px; overflow: hidden; height: 260px;">
+              <img src="./assets/media/cheek_kiss_selfie.png" alt="Sweetest cheek kiss selfie" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="margin-top: 10px;">
+              <button class="btn btn-wine" id="sendKissBtn" style="font-size: 0.82rem; padding: 8px 18px;">💋 Kiss Bunnyy's Cheek!</button>
+            </div>
+          </div>
+
+          <div style="border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-subtle); position: relative;">
+            <img src="./assets/media/aerial_birds_eye_hug.png" alt="Aerial view embrace" style="width: 100%; height: 190px; object-fit: cover; display: block;" loading="lazy">
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(7,7,7,0.85) 0%, transparent 100%); padding: 10px 16px;">
+              <span style="font-size: 0.75rem; color: var(--accent-champagne);">Overhead Perspective: Two Hearts In Sync</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       13 — EVERY MOMENT IS SPECIAL: MEMORY CONSTELLATION
+       ========================================================================== -->
+  <section class="chapter-section" id="chapter-constellation">
+    <div class="constellation-wrapper">
+      <canvas id="constellationCanvas"></canvas>
+      
+      <div class="constellation-header">
+        <span class="streaming-badge">INTERACTIVE CONSTELLATION</span>
+        <p style="font-size:1rem; color:var(--text-muted); margin-top:10px;">When she asked him:</p>
+        <p style="font-family:var(--font-editorial); font-size:1.3rem; font-style:italic; color:#fff;">“What is the most special moment in our life?”</p>
+        <div class="quote-telugu-hero">“Nitho unna prathi moment special eh naku.”</div>
+        <div class="quote-english-sub">“Every moment I spend with you is special to me.”</div>
+        <p style="font-size:0.85rem; color:var(--accent-champagne); margin-top:8px;">✨ Hover &amp; click the glowing star nodes to explore the memories</p>
+      </div>
+
+      <div class="constellation-modal" id="constellationModal">
+        <img id="constellationImg" src="" alt="Memory preview">
+        <div class="constellation-modal-text">
+          <span id="constellationDate" style="font-size:0.72rem; color:var(--accent-champagne); font-weight:700; text-transform:uppercase;"></span>
+          <h4 id="constellationTitle"></h4>
+          <p id="constellationDesc"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       14 — PELLI CHOOPULU: THE SECOND PROPOSAL
+       ========================================================================== -->
+  <section class="chapter-section" id="chapter-family">
+    <div class="chapter-badge-wrap">
+      <span class="streaming-badge">EPISODE 08 • FAMILY PREMIERE</span>
+    </div>
+    <h2 class="chapter-heading">The Yes That Everyone Saw</h2>
+    <p class="chapter-lead">
+      “She had already said yes once.<br>
+      But this time... everyone was watching.<br>
+      On the day of their Pelli Choopulu, he proposed to her again — in front of her whole family.”
+    </p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:24px; margin-top:30px;">
+      <div style="border-radius:16px; overflow:hidden; border:1px solid var(--border-highlight);">
+        <img src="./assets/media/wedding_purple_laugh.png" alt="Pelli Choopulu traditional joyous laugh" style="width:100%; height:440px; object-fit:cover;" loading="lazy">
+      </div>
+      <div style="border-radius:16px; overflow:hidden; border:1px solid var(--border-highlight);">
+        <img src="./assets/media/wedding_purple_portrait.png" alt="Pelli Choopulu traditional portrait" style="width:100%; height:440px; object-fit:cover;" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       14.5 — DEDICATED EMOTIONAL SECTION: THE MIDNIGHT CHAT ARCHIVE (MAY 9, 2026)
+       ========================================================================== -->
+  <section class="chapter-section emotional-chat-archive-section" id="chapter-raw-chat">
+    <div class="archive-glow-orb" aria-hidden="true"></div>
+    <div class="chat-relics-container">
+      <div style="text-align:center; max-width:820px; margin:0 auto;">
+        <span class="streaming-badge" style="background:rgba(212,175,55,0.15); border-color:var(--accent-gold); color:var(--accent-gold);">
+          ★ EXCLUSIVE UNRELEASED ARCHIVE • MAY 9, 2026 • 11:13 PM
+        </span>
+        <h2 class="chapter-heading" style="margin-top:14px; font-size:clamp(1.8rem, 3.8vw, 3rem);">
+          THE MIDNIGHT TEXTS: “GOOD BYE BOYFRIEND”
+        </h2>
+        <p class="chapter-lead" style="margin-top:10px; color:var(--accent-champagne); font-style:italic;">
+          “8 years of secrecy, laughter, tears, and waiting.<br>
+          12 hours before the sacred mandapam curtain lowered, in the quiet darkness of their rooms with racing hearts... this is what they typed.”
+        </p>
+        <p style="font-size:0.9rem; color:var(--text-muted); max-width:650px; margin:12px auto 0; line-height:1.6;">
+          These are the real, unedited WhatsApp screenshots captured at 11:13 PM on the eve of their wedding. The exact moment an 8-year chapter came to its bittersweet, joyous end to make way for eternity.
+        </p>
+      </div>
+
+      <!-- Dual High-Resolution Chat Relics -->
+      <div class="chat-relics-grid">
+        <!-- Relic 1: Pelli Cheskundhamaaa? -->
+        <div class="chat-relic-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="relic-timestamp-badge">🕒 11:07 PM – 11:12 PM</span>
+            <span style="font-size:0.75rem; color:var(--text-muted);">EVIDENCE PART I</span>
+          </div>
+
+          <div class="relic-img-frame" onclick="window.app && window.app.openLightbox([{src:'./assets/media/whatsapp_wedding_eve_1.png', title:'Authentic Wedding Eve Chat (Part 1)', caption:'Pelli cheskundhamaaa? Cheskundham. 8yrs wait ended.'}], 0);" title="Click to view full high-resolution screenshot">
+            <img src="./assets/media/whatsapp_wedding_eve_1.png" alt="Real WhatsApp screenshot: Pelli cheskundhamaaa?" loading="lazy">
+            <div class="relic-zoom-hint">🔍 Tap to Zoom</div>
+          </div>
+
+          <div class="relic-annotations">
+            <div class="relic-quote-item">
+              <div class="relic-quote-title">“Pelli cheskundhamaaa? 🫱🏻‍🫲🏼”</div>
+              <div class="relic-quote-sub">
+                After 8 years of holding hands in secret and dreaming of this day, she asks with the same innocent spark from their school days.
+              </div>
+            </div>
+
+            <div class="relic-quote-item gold">
+              <div class="relic-quote-title">“Cheskundham ❤️ 8yrs”</div>
+              <div class="relic-quote-sub">
+                Bunnyy's calm, steady answer. 2,920 days of waiting, protecting, and loving her—condensed into a single promise.
+              </div>
+            </div>
+
+            <div class="relic-quote-item">
+              <div class="relic-quote-title">“Our big day tomorrow 🥹🥹”</div>
+              <div class="relic-quote-sub">
+                The realization sinking in. Tomorrow morning, their names will be bound together before God and family.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Relic 2: Good Bye Boy Friend! -->
+        <div class="chat-relic-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="relic-timestamp-badge" style="background:rgba(180,40,75,0.15); border-color:var(--accent-rose); color:var(--accent-rose);">
+              🕒 11:13 PM – 11:14 PM
+            </span>
+            <span style="font-size:0.75rem; color:var(--text-muted);">EVIDENCE PART II</span>
+          </div>
+
+          <div class="relic-img-frame" onclick="window.app && window.app.openLightbox([{src:'./assets/media/whatsapp_wedding_eve_2.png', title:'Authentic Wedding Eve Chat (Part 2)', caption:'Good bye boy friend! Good bye girlfriend. Okk maharani 👑'}], 0);" title="Click to view full high-resolution screenshot">
+            <img src="./assets/media/whatsapp_wedding_eve_2.png" alt="Real WhatsApp screenshot: Good bye boy friend" loading="lazy">
+            <div class="relic-zoom-hint">🔍 Tap to Zoom</div>
+          </div>
+
+          <div class="relic-annotations">
+            <div class="relic-quote-item">
+              <div class="relic-quote-title">“Good bye boy friend!!! 👋✨”</div>
+              <div class="relic-quote-sub">
+                The sweetest farewell in human history. The end of the "boyfriend" title they carried through high school and college.
+              </div>
+            </div>
+
+            <div class="relic-quote-item gold">
+              <div class="relic-quote-title">“Good bye girlfriend.”</div>
+              <div class="relic-quote-sub">
+                Said with a smile and teary eyes, knowing that when tomorrow's sun rises, she will become Mrs. Manideep.
+              </div>
+            </div>
+
+            <div class="relic-quote-item">
+              <div class="relic-quote-title">“Okk maharani 👑”</div>
+              <div class="relic-quote-sub">
+                His final text of the night. His lifelong commitment: in every phase, in every storm, she will forever be his Queen.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deeply Personal Diary Reflections -->
+      <div class="diary-letters-grid">
+        <div class="diary-card">
+          <div class="diary-author">
+            <img src="./assets/media/cheek_kiss_selfie.png" alt="Meghana" class="diary-avatar">
+            <div class="diary-author-info">
+              <h4>Meghana's Midnight Thoughts</h4>
+              <span>Written May 9, 2026 • 11:13 PM</span>
+            </div>
+          </div>
+          <div class="diary-body">
+            “My hands were literally trembling when I sent that message. For 8 long years, through every exam, every secret call, and every family hesitation, Bunnyy was my safety net. Saying 'goodbye boyfriend' wasn't sad — it was the happiest ache in my chest. I knew I was giving up the boy who loved me in school, only to take his hand as my husband forever.”
+          </div>
+        </div>
+
+        <div class="diary-card">
+          <div class="diary-author">
+            <img src="./assets/media/sunny_gaze_close.png" alt="Bunnyy" class="diary-avatar">
+            <div class="diary-author-info">
+              <h4>Bunnyy's Midnight Thoughts</h4>
+              <span>Written May 9, 2026 • 11:14 PM</span>
+            </div>
+          </div>
+          <div class="diary-body">
+            “I stared at 'Good bye girlfriend' on my screen for a long time. 8 years felt like a movie playing in reverse — from the day I fell for her smile in 10th class, to the midnight terrace cake, to the roses on ordinary days. Ending that chat with 'Okk maharani' wasn't a casual line. It was my silent prayer and vow that she would never lose her smile with me.”
+          </div>
+        </div>
+      </div>
+
+      <!-- Emotional Interactive Actions -->
+      <div class="archive-action-strip">
+        <button class="btn btn-wine" id="archiveHeartPetalsBtn">
+          ❤️ Bless Their 8-Year Journey (Shower Rose Petals)
+        </button>
+        <button class="btn btn-secondary" onclick="window.app && window.app.openLightbox([{src:'./assets/media/whatsapp_wedding_eve_1.png', title:'Authentic Wedding Eve Chat Part 1', caption:'Pelli cheskundhamaaa? Cheskundham. 8yrs'}, {src:'./assets/media/whatsapp_wedding_eve_2.png', title:'Authentic Wedding Eve Chat Part 2', caption:'Good bye boy friend! Good bye girlfriend. Okk maharani 👑'}], 0);">
+          🔍 Inspect Both Screenshots in High Definition
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       15 — MAY 10, 2026: THE WEDDING DAY & REAL WHATSAPP CHAT
+       ========================================================================== -->
+  <section class="chapter-section" id="chapter-wedding">
+    <div class="wedding-showcase">
+      <div class="wedding-date-hero">
+        <span class="streaming-badge" style="margin-bottom:12px;">EPISODE 09 • THE WEDDING DAY</span>
+        <div class="wedding-big-date">MAY 10, 2026</div>
+        <h2 style="font-family:var(--font-serif); font-size:clamp(1.6rem, 3.5vw, 2.6rem); color:var(--accent-champagne); margin-top:8px;">
+          THE DAY OUR STORY BECAME OUR FOREVER
+        </h2>
+        <div style="margin-top:14px;">
+          <span class="streaming-badge" style="background:rgba(212,175,55,0.2); border-color:var(--accent-gold); color:var(--accent-gold);">
+            STATUS: JUST MARRIED → FOREVER 💍
+          </span>
+        </div>
+      </div>
+
+      <div class="wedding-compact-grid">
+        <!-- LEFT: Live Animated WhatsApp Texting Simulator as the Star -->
+        <div class="whatsapp-phone-mockup" id="whatsappPhone">
+          <div class="wa-simulation-header">
+            <span class="wa-live-badge">Live Texting Simulation</span>
+            <div class="wa-controls-row">
+              <button class="wa-action-btn" id="replayChatBtn" title="Replay texting from start">↺ Replay</button>
+              <button class="wa-action-btn" id="showAllChatBtn" title="Show all messages">⏩ Fast</button>
+              <button class="wa-action-btn" id="toggleRawScreenshotBtn" title="View authentic raw screenshots">📱 Raw WhatsApp</button>
+            </div>
+          </div>
+          <div class="wa-top-bar">
+            <img src="./assets/media/sunny_gaze_close.png" alt="Bunnyy Avatar" class="wa-avatar">
+            <div class="wa-user-info">
+              <h5>My MAN 💕</h5>
+              <p id="waStatusText">online • Wedding Eve, 11:58 PM</p>
+            </div>
+          </div>
+          <div class="wa-chat-body" id="waChatBody">
+            <!-- Messages inserted dynamically via app.js with live typing delays and sound -->
+            <div class="wa-typing-indicator" id="waTypingIndicator">
+              <span id="typingSenderName">Bunnyy</span> is typing
+              <div class="typing-dots">
+                <span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Reaction Buttons -->
+          <div class="wa-quick-reactions" id="waQuickReactions">
+            <button class="wa-reaction-emoji-btn" data-emoji="💍" title="React with Ring">💍</button>
+            <button class="wa-reaction-emoji-btn" data-emoji="❤️" title="React with Heart">❤️</button>
+            <button class="wa-reaction-emoji-btn" data-emoji="🎉" title="React with Celebration">🎉</button>
+            <button class="wa-reaction-emoji-btn" data-emoji="🥂" title="React with Cheers">🥂</button>
+            <button class="wa-reaction-emoji-btn" data-emoji="🌾" title="React with Akshatalu">🌾</button>
+          </div>
+
+          <!-- Interactive Wishing Input Bar -->
+          <div class="wa-wishing-input-bar">
+            <input type="text" id="waWishInput" class="wa-wish-input" placeholder="Send your wedding blessings to Meghana &amp; Bunnyy...">
+            <button id="waWishSendBtn" class="wa-wish-send-btn" title="Send Blessings">➤</button>
+          </div>
+
+          <!-- Raw Screenshot Comparison Drawer -->
+          <div class="wa-comparison-drawer" id="waComparisonDrawer" style="display:none;">
+            <p style="font-size:0.75rem; color:var(--accent-champagne); margin-bottom:8px; font-weight:600;">
+              AUTHENTIC RAW WHATSAPP EVIDENCE (MAY 9/10, 2026)
+            </p>
+            <div style="display:flex; gap:10px; justify-content:center; overflow-x:auto;">
+              <img src="./assets/media/whatsapp_wedding_eve_1.png" alt="Raw Chat 1" style="height:160px; border-radius:8px; border:1px solid var(--border-subtle); cursor:pointer;" onclick="window.app && window.app.openLightbox([{src:'./assets/media/whatsapp_wedding_eve_1.png', title:'Authentic Wedding Eve Chat Part 1', caption:'Pelli cheskundhamaaa? Cheskundham. 8yrs'}], 0);">
+              <img src="./assets/media/whatsapp_wedding_eve_2.png" alt="Raw Chat 2" style="height:160px; border-radius:8px; border:1px solid var(--border-subtle); cursor:pointer;" onclick="window.app && window.app.openLightbox([{src:'./assets/media/whatsapp_wedding_eve_2.png', title:'Authentic Wedding Eve Chat Part 2', caption:'Good bye boy friend! Good bye girlfriend. Okk maharani'}], 0);">
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Compact Visuals & Sacred Ritual Cards -->
+        <div class="wedding-media-strip">
+          <!-- Compact Ceremony Video Card -->
+          <div class="wedding-compact-card">
+            <video controls playsinline loop poster="./assets/media/grand_royal_wedding.png" style="max-height:220px; width:100%; object-fit:cover; display:block;">
+              <source src="./assets/media/video_wedding_mandapam.mp4" type="video/mp4">
+            </video>
+            <div class="card-caption">
+              <h4 style="font-family:var(--font-serif); font-size:1.05rem; color:var(--accent-champagne);">The Sacred Jeelakarra Bellam</h4>
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Under the mandapam as the sacred curtain lowered. A gaze filled with 8 years of love.</p>
+            </div>
+          </div>
+
+          <!-- Compact Wedding Stage Card with Akshatalu Shower -->
+          <div class="wedding-compact-card akshatalu-stage-wrapper" id="akshataluWrapper" style="position:relative; margin:0;">
+            <canvas id="akshataluCanvas" style="position:absolute; inset:0; pointer-events:none; z-index:3; width:100%; height:100%;"></canvas>
+            <img src="./assets/media/grand_royal_wedding.png" alt="Grand Royal Wedding Stage" style="max-height:220px; width:100%; object-fit:cover; display:block;" loading="lazy">
+            
+            <!-- Interactive Detail Pins -->
+            <div class="wedding-hotspot" style="top:20%; left:34%;" title="Jeelakarra Bellam">
+              <span>✨</span>
+              <div class="hotspot-tooltip">Jeelakarra Bellam: Sacred cumin &amp; jaggery paste</div>
+            </div>
+            <div class="wedding-hotspot" style="top:35%; left:68%;" title="Bridal Jaimala">
+              <span>🌹</span>
+              <div class="hotspot-tooltip">Bridal Jaimala: Sacred fragrant rose exchange</div>
+            </div>
+            <div class="wedding-hotspot" style="top:60%; left:70%;" title="Royal Kanchipuram Saree">
+              <span>👑</span>
+              <div class="hotspot-tooltip">Royal Kanchipuram Gold &amp; Violet Bridal Silk</div>
+            </div>
+
+            <div class="card-caption" style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <h4 style="font-family:var(--font-serif); font-size:1.05rem; color:var(--accent-champagne);">The Royal Stage</h4>
+                <p style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">May 10, 2026 • Sacred Matrimony</p>
+              </div>
+              <button class="btn btn-wine" id="showerAkshataluBtn" style="padding:6px 14px; font-size:0.8rem; white-space:nowrap;">🌾 Shower Blessings</button>
+            </div>
+          </div>
+
+          <!-- Milestone Vow Card -->
+          <div style="background:rgba(255,255,255,0.03); border:1px dashed var(--border-subtle); border-radius:var(--radius-md); padding:16px; text-align:center;">
+            <span style="font-size:0.75rem; color:var(--accent-champagne); font-weight:700; letter-spacing:0.1em; text-transform:uppercase;">THE VOW</span>
+            <p style="font-family:var(--font-editorial); font-size:1.15rem; font-style:italic; color:#fff; margin-top:6px;">
+              “Nitho unna prathi moment special eh naku... repu nundi official ga forever.”
+            </p>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:8px;">
+              10th Class Crush • Intermediate Proposal • May 10, 2026 Marriage 💍
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       16 — SEASON TWO: MARRIED LIFE
+       ========================================================================== -->
+  <section class="chapter-section" id="chapter-season-2" style="text-align:center;">
+    <span class="streaming-badge">SEASON ONE COMPLETE</span>
+    <h2 class="chapter-heading" style="margin-top:16px;">SEASON TWO: MARRIED LIFE ❤️</h2>
+    <p class="chapter-lead" style="margin: 0 auto;">“Same best friends. New chapter.”</p>
+  </section>
+
+  <!-- ==========================================================================
+       17 — MOVIE NIGHT MODE: OUR FAVOURITE THEATRE
+       ========================================================================== -->
+  <section class="chapter-section" id="chapter-movienight">
+    <div class="movie-night-container">
+      <span class="streaming-badge">EPISODE 10 • MARRIED LIFE</span>
+      <h2 class="chapter-heading" style="margin-top:14px;">“OUR FAVOURITE THEATRE”</h2>
+      <p class="chapter-lead" style="margin: 0 auto 20px;">
+        “Not a cinema.<br><strong style="color:var(--text-primary);">Our room.</strong>”
+      </p>
+
+      <div style="margin: 30px auto; max-width:600px;">
+        <img src="./assets/media/movie_theatre_seats.png" alt="Watching movie in Asian Cinemas" style="width:100%; border-radius:16px; border:1px solid var(--border-subtle);" loading="lazy">
+      </div>
+
+      <div class="movie-ticket-wrapper">
+        <div class="ticket-left">
+          <span class="ticket-badge">CINEMA STREAMING PASS</span>
+          <div class="ticket-movie-title">MOVIE: US</div>
+          <div class="ticket-meta">
+            <strong>ADMIT:</strong> TWO SOULS<br>
+            <strong>SEATS:</strong> TOGETHER<br>
+            <strong>SHOWTIME:</strong> ALWAYS<br>
+            <strong>THEATRE:</strong> OUR COZY BEDROOM
+          </div>
+        </div>
+        <div class="ticket-right">
+          <div class="ticket-barcode">||| |||| | ||||| ||</div>
+          <span style="font-size:0.75rem; color:var(--accent-champagne);">M &amp; M FOREVER</span>
+        </div>
+      </div>
+
+      <!-- INNOVATIVE FEATURE: ASIAN CINEMAS INTERACTIVE SEAT MAP -->
+      <div class="cinema-seating-card">
+        <div class="cinema-screen-bar"></div>
+        <div class="seats-grid">
+          <div class="seat-row">
+            <span class="seat-unit">A1</span><span class="seat-unit">A2</span><span class="seat-unit">A3</span><span class="seat-unit">A4</span><span class="seat-unit">A5</span><span class="seat-unit">A6</span>
+          </div>
+          <div class="seat-row">
+            <span class="seat-unit">B1</span><span class="seat-unit">B2</span><span class="seat-unit">B3</span><span class="seat-unit">B4</span><span class="seat-unit">B5</span><span class="seat-unit">B6</span>
+          </div>
+          <div class="seat-row">
+            <span class="seat-unit">F11</span><span class="seat-unit">F12</span>
+            <span class="seat-unit couple-reserved" id="seatMeghana" title="Seat F13: Reserved for Meghana">F13 👑</span>
+            <span class="seat-unit couple-reserved" id="seatBunnyy" title="Seat F14: Reserved for Bunnyy">F14 🎩</span>
+            <span class="seat-unit">F15</span><span class="seat-unit">F16</span>
+          </div>
+        </div>
+        <p style="font-size:0.82rem; color:var(--accent-champagne); margin-top:14px; font-weight:600;">
+          ❤️ Asian Cinemas Hall 1, Row F (Seats 13 &amp; 14): Reserved exclusively for Meghana &amp; Bunnyy!
+        </p>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
+          (Tap seats to view special movie night orders!)
+        </p>
+      </div>
+
+      <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:20px;">
+        <button class="btn btn-primary" id="startMovieNightBtn">🍿 START MOVIE NIGHT</button>
+        <button class="btn btn-secondary" id="exitMovieNightBtn">Exit Movie Mode</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       18 — LOVE IN THE LITTLE THINGS (FLOATING TILES)
+       ========================================================================== -->
+  <section class="chapter-section" id="chapter-little-things">
+    <div style="text-align:center; max-width:800px; margin: 0 auto 40px;">
+      <span class="streaming-badge">MICRO-MOMENTS</span>
+      <h2 class="chapter-heading" style="margin-top:14px;">Love In The Little Things</h2>
+      <p class="chapter-lead">Every little memory, ordinary giggle, and thoughtful moment.</p>
+    </div>
+
+    <div class="memory-tiles-grid">
+      <div class="memory-tile">
+        <div class="tile-icon">🌹</div>
+        <div class="tile-title">Random Roses</div>
+        <div class="tile-desc">Bringing fresh blooms without needing any anniversary.</div>
+      </div>
+      <div class="memory-tile">
+        <div class="tile-icon">👜</div>
+        <div class="tile-title">The Unexpected Bag</div>
+        <div class="tile-desc">Her casual joke about Michael Kors turned into reality.</div>
+      </div>
+      <div class="memory-tile">
+        <div class="tile-icon">🎬</div>
+        <div class="tile-title">Room Movie Nights</div>
+        <div class="tile-desc">Dimmed lights, popcorn, blankets, laughing till 2 AM.</div>
+      </div>
+      <div class="memory-tile">
+        <div class="tile-icon">😂</div>
+        <div class="tile-title">Fighting Like Kids</div>
+        <div class="tile-desc">Silly arguments, arcade basketball clashes, teasing smiles.</div>
+      </div>
+      <div class="memory-tile">
+        <div class="tile-icon">❤️</div>
+        <div class="tile-title">Making Up Instantly</div>
+        <div class="tile-desc">Never letting a day end with anger. One hug fixes all.</div>
+      </div>
+      <div class="memory-tile">
+        <div class="tile-icon">🌙</div>
+        <div class="tile-title">Midnight Vigils</div>
+        <div class="tile-desc">Staying awake through the night whenever she was unwell.</div>
+      </div>
+      <div class="memory-tile">
+        <div class="tile-icon">💐</div>
+        <div class="tile-title">Terrace Surprises</div>
+        <div class="tile-desc">Climbing rooftop at 12:00 AM with cake and teddy bear.</div>
+      </div>
+      <div class="memory-tile">
+        <div class="tile-icon">🤝</div>
+        <div class="tile-title">Standing Beside Her</div>
+        <div class="tile-desc">Shielding her from every worry with calm mother-like care.</div>
+      </div>
+      <div class="memory-tile">
+        <div class="tile-icon">💍</div>
+        <div class="tile-title">Choosing Each Other</div>
+        <div class="tile-desc">8 continuous years of choosing one another every sunrise.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       19 — ORIGINAL SOUNDTRACK & AUDIO PLAYER
+       ========================================================================== -->
+  <section class="soundtrack-section" id="chapter-soundtrack">
+    <div style="text-align:center; max-width:800px; margin: 0 auto 40px;">
+      <span class="streaming-badge">ORIGINAL SOUNDTRACK</span>
+      <h2 class="chapter-heading" style="margin-top:14px;">“OUR STORY”</h2>
+      <p class="chapter-lead">The musical score to their 8-year love story</p>
+    </div>
+
+    <div class="audio-player-card">
+      <div class="player-main-row">
+        <div class="player-track-info">
+          <h3 id="playerTrackTitle">Our Story — Cinematic Piano &amp; Strings</h3>
+          <p id="playerTrackArtist">Composed for Meghana &amp; Bunnyy</p>
+        </div>
+        <select id="trackSelectDropdown" class="btn btn-secondary" style="padding:8px 16px; font-size:0.85rem; max-width:260px;">
+          <option value="0">Piano Theme (Cinematic Ambient)</option>
+          <option value="1">Him &amp; I (Beach Sunrise Song)</option>
+          <option value="2">Holy Mantras (Wedding Ceremony)</option>
+          <option value="3">Maharani Fun Groove</option>
+        </select>
+      </div>
+
+      <!-- Waveform Canvas -->
+      <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+
+      <div class="player-controls">
+        <div class="controls-left">
+          <button id="playerPrevBtn" class="action-icon-btn" title="Previous Track">⏮</button>
+          <button id="playerPlayBtn" class="player-play-btn" title="Play / Pause">▶</button>
+          <button id="playerNextBtn" class="action-icon-btn" title="Next Track">⏭</button>
+        </div>
+        <div class="controls-right">
+          <button id="muteBtn" class="action-icon-btn" title="Toggle Mute">🔊</button>
+          <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.75" style="width:100px; accent-color:var(--accent-burgundy);">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       20 — THE LOVE LETTER (CLIMAX BEFORE FAKE ENDING)
+       ========================================================================== -->
+  <section class="love-letter-section" id="chapter-letter">
+    <p class="letter-prelude">
+      “No matter how much I say…<br>
+      it will never be enough to describe the love you've shown me.”<br>
+      <span style="font-size:0.75em; color:var(--accent-champagne);">
+        (“Thanu na paina chupinchina prema ki nenu entha cheppina thakkuve.”)
+      </span>
+    </p>
+
+    <div class="love-letter-card">
+      <div class="love-letter-lines">
+        <p>“Nenu eppudu nitho unta.”</p>
+        <p>“Ninnu odhili undadam na valla kaadhu.”</p>
+        <p>“Love ante ento ardam ayyela chesindhi ni prema na paina.”</p>
+        <p>“The way you look at me will always make me feel special.”</p>
+        <p style="font-size:1.2em; color:var(--accent-rose); font-weight:700; margin-top:10px;">
+          “I love you endlessly, Bunnyy.” ❤️
+        </p>
+      </div>
+      <div class="love-letter-signer">— With all my heart, Meghana</div>
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       21 & 22 — FAKE ENDING & NEXT EPISODE: BABY COMING SOON
+       ========================================================================== -->
+  <div class="fake-ending-stage" id="fakeEndingStage">
+    <h2 class="fake-the-end" id="theEndText">THE END.</h2>
+    <div class="actually-turn" id="actuallyText" style="display:none;">
+      “Actually…<br>
+      Our biggest adventure hasn't even started yet.”
+    </div>
+
+    <!-- 22 Next Episode Reveal -->
+    <div class="next-episode-baby-reveal" id="nextEpisodeBaby" style="display:none;">
+      <div class="baby-halo-icon">👶</div>
+      <span class="streaming-badge" style="background:rgba(230,199,156,0.2); border-color:var(--accent-champagne); color:var(--accent-champagne);">
+        NEXT EPISODE • COMING SOON
+      </span>
+      <h2 style="font-family:var(--font-serif); font-size:clamp(2rem, 5vw, 3.6rem); margin: 20px 0 10px;">
+        Two became one story.<br>Soon, our story becomes three.
+      </h2>
+      <p style="font-family:var(--font-editorial); font-size:1.35rem; font-style:italic; color:var(--accent-champagne);">
+        Our family is growing. The sweetest chapter arrives soon.
+      </p>
+
+      <div class="baby-unlocked-card">
+        <span style="font-size:2rem;">🍼</span>
+        <div style="text-align:left;">
+          <h4 style="font-family:var(--font-serif); font-size:1.15rem; color:#fff;">NEW PROFILE UNLOCKED</h4>
+          <p style="font-size:0.85rem; color:var(--accent-champagne);">Profile: Baby M&amp;M arriving soon</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       23 — FINAL CINEMATIC CREDITS
+       ========================================================================== -->
+  <footer class="credits-roll" id="chapter-credits">
+    <h2 class="credits-title">OUR STORY</h2>
+    
+    <div class="credits-grid">
+      <div>
+        <div class="credit-role">Genre</div>
+        <div class="credit-name">Love • Friendship • Family</div>
+      </div>
+      <div>
+        <div class="credit-role">Started</div>
+        <div class="credit-name">10th Class School Days</div>
+      </div>
+      <div>
+        <div class="credit-role">Forever Began</div>
+        <div class="credit-name">May 10, 2026</div>
+      </div>
+      <div>
+        <div class="credit-role">Current Season</div>
+        <div class="credit-name">Married Life ❤️</div>
+      </div>
+      <div>
+        <div class="credit-role">Next Season</div>
+        <div class="credit-name">Coming Soon 👶</div>
+      </div>
+      <div>
+        <div class="credit-role">Starring</div>
+        <div class="credit-name">Meghana &amp; Manideep (Bunnyy)</div>
+      </div>
+    </div>
+
+    <p style="font-family:var(--font-editorial); font-size:1.25rem; font-style:italic; max-width:700px; margin: 0 auto 30px; line-height:1.7; color:var(--text-muted);">
+      “He loved her before she knew.<br>
+      He surprised her when she least expected.<br>
+      He stood beside her when she needed him.<br>
+      And eventually… they chose forever.”
+    </p>
+
+    <div class="final-endless-love">
+      “I LOVE YOU ENDLESSLY, BUNNYY. ❤️”
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin-top:30px;">
+      <a href="#hero" class="btn btn-secondary">↻ REWATCH</a>
+      <a href="#chapter-gallery" class="btn btn-secondary">♡ OUR MEMORIES</a>
+      <button class="btn btn-wine" onclick="window.app && window.app.showRoseToast('Playing our romantic soundtrack 🎵');">🎵 PLAY OUR SONG</button>
+    </div>
+
+    <p style="font-size:0.75rem; color:var(--text-subtle); margin-top:50px; letter-spacing:0.1em; text-transform:uppercase;">
+      OUR STORY CONTINUES • EXCLUSIVELY NOW STREAMING
+    </p>
+  </footer>
+
+  <!-- ==========================================================================
+       28 — EDITORIAL GALLERY ("SCENES FROM US")
+       ========================================================================== -->
+  <section class="chapter-section" id="chapter-gallery">
+    <div style="text-align:center; max-width:800px; margin: 0 auto 40px;">
+      <span class="streaming-badge">EDITORIAL VAULT</span>
+      <h2 class="chapter-heading" style="margin-top:14px;">Scenes From Us</h2>
+      <p class="chapter-lead">Every high-definition memory from school days to marriage</p>
+      
+      <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:20px;">
+        <button class="btn btn-secondary gallery-filter-btn active" data-filter="all">All</button>
+        <button class="btn btn-secondary gallery-filter-btn" data-filter="wedding">Wedding</button>
+        <button class="btn btn-secondary gallery-filter-btn" data-filter="romance">Romance</button>
+        <button class="btn btn-secondary gallery-filter-btn" data-filter="pre-wedding">Pre-Wedding</button>
+        <button class="btn btn-secondary gallery-filter-btn" data-filter="candid">Candid</button>
+      </div>
+    </div>
+
+    <div id="galleryGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:20px;">
+      <!-- Populated dynamically by app.js -->
+    </div>
+  </section>
+
+  <!-- ==========================================================================
+       INNOVATIVE FLOATING CONTROLS:
+       - Story Remote Button
+       - Floating Rose Button
+       - Sticky Mini Audio Player
+       ========================================================================== -->
+  <!-- 24 Story Remote Button -->
+  <button class="story-remote-btn" id="storyRemoteBtn" aria-label="Open Episode Remote">
+    <span>📺</span>
+    <span>Story Remote</span>
+  </button>
+
+  <!-- 26 Floating Rose Button -->
+  <button class="floating-rose-btn" id="floatingRoseBtn" title="A rose for no reason" aria-label="Rose Bloom">
+    🌹
+  </button>
+
+  <!-- Sticky Mini Player -->
+  <div class="sticky-mini-player" id="stickyMiniPlayer">
+    <button class="mini-player-btn" id="miniPlayBtn" aria-label="Play or pause audio">▶</button>
+    <span class="mini-player-text" id="miniTrackTitle">Rendu Kallu Chalavamma 🎵</span>
+  </div>
+
+  <!-- ==========================================================================
+       MODALS:
+       - Story Remote Modal
+       - Episode Detail Modal
+       - Lightbox Modal
+       ========================================================================== -->
+  <!-- Story Remote Modal -->
+  <div class="remote-modal" id="storyRemoteModal" role="dialog" aria-modal="true" aria-label="Episode Remote">
+    <div class="remote-sheet">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-family:var(--font-serif); font-size:1.4rem;">JUMP TO AN EPISODE</h3>
+        <button id="remoteCloseBtn" class="action-icon-btn" aria-label="Close Remote">✕</button>
+      </div>
+      <div class="remote-episodes-grid" id="remoteEpisodesGrid">
+        <!-- Rendered by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Episode Detail Modal -->
+  <div class="remote-modal" id="episodeDetailModal" role="dialog" aria-modal="true" aria-label="Episode Details">
+    <div class="remote-sheet" style="max-width:760px;">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span id="modalEpBadge" class="streaming-badge"></span>
+        <button onclick="document.getElementById('episodeDetailModal').classList.remove('open');" class="action-icon-btn">✕</button>
+      </div>
+      <div id="modalEpMedia" style="margin-top:10px;"></div>
+      <h3 id="modalEpTitle" style="font-family:var(--font-serif); font-size:1.8rem; margin-top:12px;"></h3>
+      <p id="modalEpTagline" style="font-family:var(--font-editorial); font-size:1.2rem; font-style:italic; color:var(--accent-champagne);"></p>
+      <p id="modalEpDesc" style="color:var(--text-muted); line-height:1.6;"></p>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+        <span id="modalEpDuration" style="font-size:0.85rem; color:var(--accent-rose); font-weight:700;"></span>
+        <button class="btn btn-wine" onclick="document.getElementById('episodeDetailModal').classList.remove('open');">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Editorial Lightbox Modal -->
+  <div class="lightbox-modal" id="lightboxModal" role="dialog" aria-modal="true" aria-label="Photo Lightbox">
+    <div class="lightbox-content">
+      <button class="lightbox-close" id="lightboxCloseBtn" aria-label="Close Lightbox">✕</button>
+      <button class="lightbox-nav prev" id="lightboxPrevBtn" aria-label="Previous Photo">‹</button>
+      <div class="lightbox-media-container" id="lightboxMedia"></div>
+      <button class="lightbox-nav next" id="lightboxNextBtn" aria-label="Next Photo">›</button>
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+  </div>
+
+  <!-- Global Surprise Memory Modal (Triggered by ✨ in Header & Constellation) -->
+  <div class="surprise-modal-overlay" id="surpriseModal" role="dialog" aria-modal="true" aria-label="Surprise Memory">
+    <div class="surprise-modal-card">
+      <button class="surprise-modal-close" id="surpriseModalCloseBtn" aria-label="Close">✕</button>
+      <span class="streaming-badge" style="background:rgba(230,199,156,0.15); border-color:var(--accent-gold); color:var(--accent-gold);">
+        ✨ SURPRISE MEMORY CAPSULE
+      </span>
+      <h3 id="surpriseModalTitle" style="font-family:var(--font-serif); font-size:1.6rem; color:var(--accent-champagne); margin-top:12px;"></h3>
+      <p id="surpriseModalDate" style="font-size:0.85rem; color:var(--accent-rose); font-weight:700; margin-top:4px;"></p>
+      <img id="surpriseModalImg" class="surprise-modal-img" src="./assets/media/sunset_embrace_gold.png" alt="Surprise Memory">
+      <p id="surpriseModalDesc" style="color:var(--text-muted); font-size:0.95rem; line-height:1.6; margin-bottom:20px;"></p>
+      <div style="display:flex; justify-content:center; gap:12px;">
+        <button class="btn btn-primary" id="surpriseModalNextBtn">🎲 Another Surprise</button>
+        <button class="btn btn-secondary" id="surpriseModalDismissBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Movie Night Theater Overlay (Triggered by 🍿 Movie Night Mode) -->
+  <div class="movie-theater-overlay" id="movieNightTheaterOverlay" role="dialog" aria-modal="true" aria-label="Movie Night Theater">
+    <div class="theater-top-controls">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span class="streaming-badge" style="background:rgba(180,40,75,0.3); border-color:var(--accent-rose); color:#fff;">
+          🍿 MOVIE NIGHT MODE ACTIVE
+        </span>
+        <span style="font-size:0.85rem; color:var(--accent-champagne); font-weight:600;">Cozy Bedroom Cinema • Asian Cinemas Pass</span>
+      </div>
+      <button class="theater-close-btn" id="theaterOverlayCloseBtn" aria-label="Exit Theater">✕ Exit Movie Night</button>
+    </div>
+
+    <div class="theater-screen-ambient">
+      <video id="theaterVideoPlayer" controls autoplay loop playsinline poster="./assets/media/movie_theatre_seats.png">
+        <source src="./assets/media/video_arcade_fun.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; max-width:820px; width:100%; margin-top:20px; gap:20px; flex-wrap:wrap;">
+      <div class="ticket-meta" style="color:#e9edef; font-size:0.9rem;">
+        <strong style="color:var(--accent-champagne);">NOW STREAMING:</strong> Our Love Chronicle 🎬<br>
+        <span style="color:var(--text-muted);">ADMIT TWO: Meghana &amp; Bunnyy • SEATS: Cuddled Close • SHOWTIME: Always</span>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-secondary" id="theaterSwitchVideoBtn" style="font-size:0.85rem;">🎬 Next Clip</button>
+        <button class="theater-close-btn" id="theaterBottomExitBtn">✕ Return to Story</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core JavaScript -->
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
