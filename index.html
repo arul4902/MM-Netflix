@@ -16,9 +16,9 @@
   <canvas id="petalsCanvas" aria-hidden="true"></canvas>
 
   <!-- ==========================================================================
-       03 — CINEMATIC INTRO SCREEN (Black screen sequence)
+       03 — CINEMATIC INTRO SCREEN (Modal overlay, can be replayed anytime)
        ========================================================================== -->
-  <div id="cinematicIntro" role="dialog" aria-modal="true" aria-label="Cinematic Intro">
+  <div id="cinematicIntro" role="dialog" aria-modal="true" aria-label="Cinematic Intro" style="display:none;">
     <div class="intro-light-sweep" id="introLightSweep"></div>
     <div class="intro-content">
       <h2 id="introPhrase" class="intro-phrase"></h2>
@@ -33,12 +33,13 @@
   </div>
 
   <!-- ==========================================================================
-       04 — WHO'S WATCHING? (Streaming Profile Selector)
+       04 — WHO'S WATCHING? (Streaming Profile Selector Modal)
        ========================================================================== -->
-  <div id="profileScreen" role="dialog" aria-modal="true" aria-label="Profile Selection">
+  <div id="profileScreen" class="hidden" role="dialog" aria-modal="true" aria-label="Profile Selection" style="display:none;">
+    <button id="closeProfileBtn" class="profile-close-btn" aria-label="Close Profile Selection" title="Close">✕</button>
     <div class="profile-header">
       <h1>Who’s watching our story?</h1>
-      <p>Select your profile to begin the cinematic journey</p>
+      <p>Select your profile or switch anytime</p>
     </div>
     <div class="profiles-grid">
       <!-- Profile HER -->
@@ -60,7 +61,7 @@
       </button>
 
       <!-- Profile US (Default) -->
-      <button class="profile-card" data-profile="us" aria-label="Watch together as Us">
+      <button class="profile-card active" data-profile="us" aria-label="Watch together as Us">
         <div class="profile-avatar" style="border-color: var(--accent-champagne);">
           <img src="./assets/media/hero_playful_pout.png" alt="Us Avatar">
           <span class="avatar-badge">US ♡</span>
@@ -1247,6 +1248,7 @@
       <div class="remote-episodes-grid" id="remoteEpisodesGrid">
         <!-- Rendered by app.js -->
       </div>
+      <button id="remoteReplayIntroBtn" class="btn btn-secondary" style="width:100%; justify-content:center; margin-top:14px;">🎬 Play Cinematic Story Intro</button>
     </div>
   </div>
 

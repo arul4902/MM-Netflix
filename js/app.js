@@ -23,8 +23,9 @@ class LoveStoryApp {
   }
 
   init() {
-    this.setupIntroSequence();
+    this.setupDirectHomeEntry();
     this.setupProfileSelection();
+    this.setupIntroSequence();
     this.renderEpisodesShelf();
     this.setupAtmosphereSlider();
     this.setupSecretTerrace();
@@ -51,14 +52,64 @@ class LoveStoryApp {
   }
 
   /* ==========================================================================
-     03 — CINEMATIC INTRO SEQUENCE
+     DIRECT HOME ENTRY ON START
+     ========================================================================== */
+  setupDirectHomeEntry() {
+    // Ensure intro and profile modal are hidden on startup so user lands directly on Home
+    const introEl = document.getElementById('cinematicIntro');
+    const profileScreen = document.getElementById('profileScreen');
+    if (introEl) {
+      introEl.style.display = 'none';
+      introEl.classList.add('fade-out');
+    }
+    if (profileScreen) {
+      profileScreen.style.display = 'none';
+      profileScreen.classList.add('hidden');
+    }
+
+    // Set default profile UI to 'Together (Us) ✨'
+    this.currentProfile = 'us';
+    const headerAvatar = document.getElementById('headerProfileAvatar');
+    const headerName = document.getElementById('headerProfileName');
+    if (headerAvatar) headerAvatar.src = './assets/media/hero_playful_pout.png';
+    if (headerName) headerName.textContent = 'Together (Us) ✨';
+
+    // Direct navigate to home
+    if (!window.location.hash || window.location.hash === '#hero') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+  }
+
+  /* ==========================================================================
+     03 — CINEMATIC INTRO SEQUENCE (Can be replayed anytime)
      ========================================================================== */
   setupIntroSequence() {
-    const introEl = document.getElementById('cinematicIntro');
     const skipBtn = document.getElementById('skipIntroBtn');
+    if (skipBtn) {
+      skipBtn.addEventListener('click', () => {
+        this.dismissIntro();
+      });
+    }
+  }
+
+  playCinematicIntro() {
+    const introEl = document.getElementById('cinematicIntro');
     const phraseEl = document.getElementById('introPhrase');
     const brandingEl = document.getElementById('introBranding');
     const lightSweep = document.getElementById('introLightSweep');
+    if (!introEl || !phraseEl || !brandingEl) return;
+
+    clearTimeout(this.introTimer);
+    this.introStep = 0;
+    introEl.classList.remove('fade-out');
+    introEl.style.display = 'flex';
+    phraseEl.style.display = 'block';
+    phraseEl.classList.remove('active');
+    brandingEl.classList.remove('active');
+    if (lightSweep) {
+      lightSweep.style.opacity = '0';
+      lightSweep.style.left = '-100%';
+    }
 
     const phrases = [
       "Some stories begin with a hello.",
@@ -79,7 +130,6 @@ class LoveStoryApp {
           setTimeout(showNextPhrase, 600);
         }, 2200);
       } else {
-        // Reveal branding & light sweep
         phraseEl.style.display = 'none';
         if (lightSweep) {
           lightSweep.style.opacity = '1';
@@ -94,13 +144,7 @@ class LoveStoryApp {
       }
     };
 
-    setTimeout(showNextPhrase, 800);
-
-    if (skipBtn) {
-      skipBtn.addEventListener('click', () => {
-        this.dismissIntro();
-      });
-    }
+    setTimeout(showNextPhrase, 500);
   }
 
   dismissIntro() {
@@ -110,17 +154,18 @@ class LoveStoryApp {
       introEl.classList.add('fade-out');
       setTimeout(() => {
         introEl.style.display = 'none';
-      }, 1200);
+      }, 800);
     }
   }
 
   /* ==========================================================================
-     04 — PROFILE SELECTION & LOG OUT / SWITCH PROFILE
+     04 — PROFILE SELECTION & SWITCH PROFILE MODAL
      ========================================================================== */
   setupProfileSelection() {
     const profileScreen = document.getElementById('profileScreen');
     const profileCards = document.querySelectorAll('.profile-card');
     const switchBtn = document.getElementById('switchProfileBtn');
+    const closeBtn = document.getElementById('closeProfileBtn');
     const headerAvatar = document.getElementById('headerProfileAvatar');
     const headerName = document.getElementById('headerProfileName');
 
@@ -157,25 +202,59 @@ class LoveStoryApp {
         if (headerAvatar) headerAvatar.src = config.avatar;
         if (headerName) headerName.textContent = config.name;
 
+        profileCards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+
         if (profileScreen) {
           profileScreen.classList.add('hidden');
+          setTimeout(() => {
+            profileScreen.style.display = 'none';
+          }, 300);
         }
 
         this.showRoseToast(config.toast);
 
-        // Start ambient soundtrack smoothly
+        // Start ambient soundtrack smoothly on user interaction
         if (!audioEngine.isPlaying) {
           audioEngine.play();
         }
       });
     });
 
-    // Switch Profile / Sign Out Button
+    // Switch Profile / Open Modal Button
     if (switchBtn) {
-      switchBtn.addEventListener('click', () => {
+      switchBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         if (profileScreen) {
-          profileScreen.classList.remove('hidden');
-          this.showRoseToast("Select a profile to switch viewing perspective 🔄");
+          profileScreen.style.display = 'flex';
+          setTimeout(() => {
+            profileScreen.classList.remove('hidden');
+          }, 10);
+        }
+      });
+    }
+
+    // Close Modal Button
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (profileScreen) {
+          profileScreen.classList.add('hidden');
+          setTimeout(() => {
+            profileScreen.style.display = 'none';
+          }, 300);
+        }
+      });
+    }
+
+    // Click outside to close modal
+    if (profileScreen) {
+      profileScreen.addEventListener('click', (e) => {
+        if (e.target === profileScreen) {
+          profileScreen.classList.add('hidden');
+          setTimeout(() => {
+            profileScreen.style.display = 'none';
+          }, 300);
         }
       });
     }
@@ -1262,6 +1341,14 @@ class LoveStoryApp {
     }
     if (closeBtn && modal) {
       closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+    }
+
+    const replayIntroBtn = document.getElementById('remoteReplayIntroBtn');
+    if (replayIntroBtn && modal) {
+      replayIntroBtn.addEventListener('click', () => {
+        modal.classList.remove('open');
+        this.playCinematicIntro();
+      });
     }
   }
 
