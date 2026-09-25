@@ -23,7 +23,6 @@ class LoveStoryApp {
   }
 
   init() {
-    this.setupDirectHomeEntry();
     this.setupProfileSelection();
     this.setupIntroSequence();
     this.renderEpisodesShelf();
@@ -52,51 +51,15 @@ class LoveStoryApp {
   }
 
   /* ==========================================================================
-     DIRECT HOME ENTRY ON START
-     ========================================================================== */
-  setupDirectHomeEntry() {
-    // Ensure intro and profile modal are hidden on startup so user lands directly on Home
-    const introEl = document.getElementById('cinematicIntro');
-    const profileScreen = document.getElementById('profileScreen');
-    if (introEl) {
-      introEl.style.display = 'none';
-      introEl.classList.add('fade-out');
-    }
-    if (profileScreen) {
-      profileScreen.style.display = 'none';
-      profileScreen.classList.add('hidden');
-    }
-
-    // Set default profile UI to 'Together (Us) ✨'
-    this.currentProfile = 'us';
-    const headerAvatar = document.getElementById('headerProfileAvatar');
-    const headerName = document.getElementById('headerProfileName');
-    if (headerAvatar) headerAvatar.src = './assets/media/hero_playful_pout.png';
-    if (headerName) headerName.textContent = 'Together (Us) ✨';
-
-    // Direct navigate to home
-    if (!window.location.hash || window.location.hash === '#hero') {
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    }
-  }
-
-  /* ==========================================================================
-     03 — CINEMATIC INTRO SEQUENCE (Can be replayed anytime)
+     03 — CINEMATIC INTRO SEQUENCE (Plays on start, transitions to profile login)
      ========================================================================== */
   setupIntroSequence() {
-    const skipBtn = document.getElementById('skipIntroBtn');
-    if (skipBtn) {
-      skipBtn.addEventListener('click', () => {
-        this.dismissIntro();
-      });
-    }
-  }
-
-  playCinematicIntro() {
     const introEl = document.getElementById('cinematicIntro');
+    const skipBtn = document.getElementById('skipIntroBtn');
     const phraseEl = document.getElementById('introPhrase');
     const brandingEl = document.getElementById('introBranding');
     const lightSweep = document.getElementById('introLightSweep');
+
     if (!introEl || !phraseEl || !brandingEl) return;
 
     clearTimeout(this.introTimer);
@@ -144,22 +107,42 @@ class LoveStoryApp {
       }
     };
 
-    setTimeout(showNextPhrase, 500);
+    setTimeout(showNextPhrase, 600);
+
+    if (skipBtn) {
+      skipBtn.onclick = () => {
+        this.dismissIntro();
+      };
+    }
+  }
+
+  playCinematicIntro() {
+    this.setupIntroSequence();
   }
 
   dismissIntro() {
     clearTimeout(this.introTimer);
     const introEl = document.getElementById('cinematicIntro');
+    const profileScreen = document.getElementById('profileScreen');
+
     if (introEl) {
       introEl.classList.add('fade-out');
       setTimeout(() => {
         introEl.style.display = 'none';
+
+        // Transition smoothly to Profile Selection / Login Screen
+        if (profileScreen) {
+          profileScreen.style.display = 'flex';
+          setTimeout(() => {
+            profileScreen.classList.remove('hidden');
+          }, 20);
+        }
       }, 800);
     }
   }
 
   /* ==========================================================================
-     04 — PROFILE SELECTION & SWITCH PROFILE MODAL
+     04 — PROFILE SELECTION & LOGIN (After intro & login -> Navigates to Home)
      ========================================================================== */
   setupProfileSelection() {
     const profileScreen = document.getElementById('profileScreen');
@@ -183,9 +166,14 @@ class LoveStoryApp {
       us: {
         name: "Together (Us) ✨",
         avatar: "./assets/media/hero_playful_pout.png",
-        toast: "Welcome to Our Story ✨ Now watching together."
+        toast: "Welcome to Our Story ✨ Now streaming together."
       }
     };
+
+    // Initialize default profile in header
+    this.currentProfile = 'us';
+    if (headerAvatar) headerAvatar.src = profileData.us.avatar;
+    if (headerName) headerName.textContent = profileData.us.name;
 
     profileCards.forEach(card => {
       card.addEventListener('click', () => {
@@ -205,23 +193,33 @@ class LoveStoryApp {
         profileCards.forEach(c => c.classList.remove('active'));
         card.classList.add('active');
 
+        // Dismiss Profile Modal with smooth fade
         if (profileScreen) {
           profileScreen.classList.add('hidden');
           setTimeout(() => {
             profileScreen.style.display = 'none';
-          }, 300);
+          }, 500);
+        }
+
+        // NAVIGATE DIRECTLY TO HOME (#hero)
+        window.location.hash = '#hero';
+        const heroSection = document.getElementById('hero');
+        if (heroSection) {
+          heroSection.scrollIntoView({ behavior: 'smooth' });
+        } else {
+          window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
         }
 
         this.showRoseToast(config.toast);
 
-        // Start ambient soundtrack smoothly on user interaction
+        // Start ambient soundtrack smoothly on login
         if (!audioEngine.isPlaying) {
           audioEngine.play();
         }
       });
     });
 
-    // Switch Profile / Open Modal Button
+    // Switch Profile / Open Modal Button from header
     if (switchBtn) {
       switchBtn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -229,7 +227,7 @@ class LoveStoryApp {
           profileScreen.style.display = 'flex';
           setTimeout(() => {
             profileScreen.classList.remove('hidden');
-          }, 10);
+          }, 20);
         }
       });
     }
@@ -242,19 +240,19 @@ class LoveStoryApp {
           profileScreen.classList.add('hidden');
           setTimeout(() => {
             profileScreen.style.display = 'none';
-          }, 300);
+          }, 500);
         }
       });
     }
 
-    // Click outside to close modal
+    // Click outside cards to close modal (if already logged in)
     if (profileScreen) {
       profileScreen.addEventListener('click', (e) => {
         if (e.target === profileScreen) {
           profileScreen.classList.add('hidden');
           setTimeout(() => {
             profileScreen.style.display = 'none';
-          }, 300);
+          }, 500);
         }
       });
     }

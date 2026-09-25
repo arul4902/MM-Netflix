@@ -199,7 +199,6 @@ body {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  display: none !important;
 }
 
 .intro-light-sweep {
@@ -332,7 +331,6 @@ body {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  display: none !important;
 }
 
 .profile-close-btn {
